@@ -53,15 +53,6 @@ export const TopHeaderBar: React.FC = () => {
             <span>GITHUB</span>
             <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white menu-transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </a>
-
-          <span className="text-zinc-600 select-none hidden xs:inline" aria-hidden="true">
-            /
-          </span>
-
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.05] backdrop-blur-md border border-white/10 text-[10px] sm:text-[11px] font-medium tracking-[0.12em] text-zinc-200 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] truncate">
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80 shadow-[0_0_8px_rgba(255,255,255,0.75)] shrink-0" />
-            <span className="truncate">ING. SOFTWARE · UCC</span>
-          </span>
         </div>
 
         {/* Top-Right */}

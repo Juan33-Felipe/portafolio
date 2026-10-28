@@ -12,14 +12,6 @@ export const HeroSection: React.FC = () => {
       <div className="relative z-10 w-full max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 lg:gap-10 items-center min-h-[calc(100vh-6rem)]">
         {/* LEFT COLUMN */}
         <div className="md:col-span-6 lg:col-span-4 flex flex-col items-start justify-center text-left order-1">
-          {/* Top Pill Badge with Glassmorphism */}
-          <div className="animate-fade-up anim-delay-0 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/40 border border-white/20 backdrop-blur-md mb-5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_20px_rgba(0,0,0,0.5)] max-w-full">
-            <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)] shrink-0" />
-            <span className="text-[11px] sm:text-xs font-sans font-medium tracking-[0.06em] text-white truncate drop-shadow-sm">
-              Ingeniería de Software · UCC Pasto
-            </span>
-          </div>
-
           {/* Prominent Display Heading — PODIUM Sharp 4.11 */}
           <h1 className="animate-fade-up anim-delay-200 font-display font-normal uppercase tracking-[0.02em] leading-[0.94] text-[2.85rem] sm:text-[3.6rem] lg:text-[4.1rem] xl:text-[4.75rem] text-white select-none break-words drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
             <span className="block">JUAN</span>
