@@ -8,11 +8,8 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Inicio', href: '#inicio' },
   { label: 'Sobre Mí', href: '#sobre-mi' },
-  { label: 'Frameworks', href: '#frameworks' },
   { label: 'Proyectos', href: '#proyectos' },
   { label: 'Experiencia', href: '#experiencia' },
-  { label: 'Metodología', href: '#metodologia' },
-  { label: 'Testimonios', href: '#testimonios' },
   { label: 'Contacto', href: '#contacto' },
 ];
 
