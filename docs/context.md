@@ -24,11 +24,12 @@
   - `/fluid.jpg`: Textura fluida carmesí para bordes luminosos, reflejos y acentos atmosféricos.
 - **Regla Terminológica:** Todo el texto visible debe estar en **Español**. Evitar estrictamente el término compuesto de desarrollo integral ("f***-stack") en la interfaz y en el código.
 
-## 3. Proyectos Destacados (Tarjetas Apiladas en 3D)
-1. **EquiWage Analytics:** Plataforma de análisis de equidad salarial y visualización avanzada de brechas de compensación con métricas estadísticas e informes interactivos.
-2. **enVault-API:** Arquitectura modular de gestión segura de secretos y variables de entorno con NestJS, cifrado robusto y control de acceso.
-3. **SpecAtlas:** Sistema inteligente de análisis de calidad de requisitos de software con grafos de impacto en Neo4j, reglas semánticas y motores de evaluación.
-4. **LurifyCase Mobile:** Ecosistema móvil multiplataforma con React Native y Expo orientado a experiencias fluidas de comercio y personalización en tiempo real.
+## 3. Proyectos Destacados (Tarjetas Apiladas en 3D & Ficha Técnica Interactiva)
+1. **EquiWage Analytics:** Plataforma de escritorio y web para auditoría salarial, detección de brechas de compensación y visualización analítica avanzada con cumplimiento normativo (Electron, React, TypeScript, Tailwind CSS, Recharts).
+2. **EchoStock:** Ecosistema vestible para SmartWatch (Wear OS) y backend reactivo para operarios de almacén con consulta y actualización de inventario por comandos de voz (Wear OS, Kotlin, Node.js, Express, WebSockets).
+3. **sudo-kill-9:** Videojuego de combate cinemático en Unity con balística de proyectiles autoguiados en tiempo real, efectos visuales procedurales con Shader Graph y máquina de estados jerárquica para jefes (Unity 3D, C#, URP, Shader Graph, Cinemachine).
+4. **SpecAtlas:** Sistema de análisis de calidad y consistencia de requisitos de software modelados como grafos de dependencias en Neo4j con evaluación semántica y simulación de impacto (Neo4j, Cypher, Spring Boot, Java, React, D3.js).
+5. **LurifyCase Mobile:** Ecosistema móvil multiplataforma con React Native y Expo orientado a la personalización interactiva y comercio de accesorios en tiempo real (React Native, Expo, TypeScript, Reanimated 3, Zustand).
 
 ## 4. Estructura de Navegación (Floating Bottom Pill Dock)
 - `Inicio` (`#inicio`)
