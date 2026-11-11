@@ -1055,7 +1055,7 @@ const ReflectiveCard = ({
                 </div>
               )}
               {imageSrc && (
-                <div className="my-3.5 relative flex-1 min-h-[260px] w-full overflow-hidden rounded-[var(--rc-tile-radius)]" style={TILE_STYLE}>
+                <div className="my-3 sm:my-3.5 relative flex-1 min-h-[190px] sm:min-h-[260px] w-full overflow-hidden rounded-[var(--rc-tile-radius)]" style={TILE_STYLE}>
                   <img
                     src={imageSrc}
                     alt={name || 'Profile'}
@@ -1066,49 +1066,32 @@ const ReflectiveCard = ({
               )}
               <div className={imageSrc ? '' : 'mt-auto'}>
                 {name && (
-                  <h3 className="m-0 text-[24px] font-medium leading-[1.15] tracking-[-0.02em] [color:var(--rc-ink)] [text-wrap:balance]">
+                  <h3 className="m-0 text-[20px] sm:text-[24px] font-medium leading-[1.15] tracking-[-0.02em] [color:var(--rc-ink)] [text-wrap:balance]">
                     {name}
                   </h3>
                 )}
-                {role && <p className="mb-0 mt-1 text-[14px] leading-[1.4] [color:var(--rc-muted)]">{role}</p>}
+                {role && <p className="mb-0 mt-1 text-[13px] sm:text-[14px] leading-[1.4] [color:var(--rc-muted)]">{role}</p>}
               </div>
               {(idLabel || idValue) && (
-                <div className="mt-4 flex flex-col gap-4">
+                <div className="mt-3 sm:mt-4 flex flex-col gap-3 sm:gap-4">
                   <div className="flex min-w-0 flex-col gap-1">
                     {idLabel && <span className="text-[12px] leading-4 [color:var(--rc-muted)]">{idLabel}</span>}
                     {idValue && (
-                      <p className="m-0 font-sans text-[12.5px] leading-[1.55] tracking-[-0.005em] [color:var(--rc-ink)] opacity-90">
+                      <p className="m-0 font-sans text-[11.5px] sm:text-[12.5px] leading-[1.55] tracking-[-0.005em] [color:var(--rc-ink)] opacity-90">
                         {idValue}
                       </p>
                     )}
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                     <button
                       type="button"
-                      className="relative box-border inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[12px] font-medium [color:var(--rc-ink)] transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
-                      style={TILE_STYLE}
-                    >
-                      <span className="pointer-events-none absolute inset-0 rounded-[inherit]" style={TILE_RIM_STYLE} />
-                      <Mail className="w-3.5 h-3.5 opacity-80 shrink-0" />
-                      <span>Contactar</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="relative box-border inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[12px] font-medium [color:var(--rc-ink)] transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
+                      onClick={() => document.getElementById('proyectos')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="relative box-border inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[12px] sm:text-[13px] font-medium [color:var(--rc-ink)] transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
                       style={TILE_STYLE}
                     >
                       <span className="pointer-events-none absolute inset-0 rounded-[inherit]" style={TILE_RIM_STYLE} />
                       <span>Explorar Proyectos</span>
                       <ArrowRight className="w-3.5 h-3.5 opacity-80 shrink-0" />
-                    </button>
-                    <button
-                      type="button"
-                      className="relative box-border inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[12px] font-medium [color:var(--rc-ink)] transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
-                      style={TILE_STYLE}
-                    >
-                      <span className="pointer-events-none absolute inset-0 rounded-[inherit]" style={TILE_RIM_STYLE} />
-                      <Download className="w-3.5 h-3.5 opacity-80 shrink-0" />
-                      <span>Descargar CV</span>
                     </button>
                   </div>
                 </div>
