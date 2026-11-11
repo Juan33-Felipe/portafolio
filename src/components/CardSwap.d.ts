@@ -1,10 +1,31 @@
 import type { CSSProperties, ForwardRefExoticComponent, HTMLAttributes, ReactNode, RefAttributes } from 'react';
 
+export interface CardSwapMetric {
+  label: string;
+  value: string;
+}
+
 export interface CardSwapItem {
   title?: string;
   image?: string;
   icon?: ReactNode;
   alt?: string;
+  appUrl?: string;
+  downloadUrl?: string;
+  downloadName?: string;
+  description?: string;
+  category?: string;
+  role?: string;
+  status?: string;
+  longDescription?: string;
+  features?: string[];
+  technologies?: string[];
+  architecture?: string;
+  metrics?: CardSwapMetric[];
+  githubUrl?: string;
+  githubFrontendUrl?: string;
+  githubBackendUrl?: string;
+  liveUrl?: string;
 }
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -17,6 +38,9 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export interface CardSwapRef {
   next: () => void;
   prev: () => void;
+  goToIndex?: (index: number) => void;
+  openModal?: (index?: number) => void;
+  getActiveIndex?: () => number;
 }
 
 export interface CardSwapProps {
@@ -42,6 +66,7 @@ export interface CardSwapProps {
   intro?: boolean;
   theme?: 'dark' | 'light';
   onCardClick?: (index: number) => void;
+  onImageClick?: (item: CardSwapItem, index: number) => void;
   onChange?: (index: number) => void;
   className?: string;
 }
