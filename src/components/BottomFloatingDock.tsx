@@ -21,7 +21,6 @@ export function useActiveSection() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight * 0.35;
       const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
 
       if (isAtBottom) {
@@ -29,12 +28,16 @@ export function useActiveSection() {
         return;
       }
 
+      // Línea de referencia en el viewport (por ejemplo, al 35% de la pantalla desde arriba)
+      const triggerPoint = window.innerHeight * 0.35;
+
       for (let i = NAV_ITEMS.length - 1; i >= 0; i--) {
         const item = NAV_ITEMS[i];
         const element = document.getElementById(item.id);
         if (element) {
-          const top = element.offsetTop;
-          if (scrollPosition >= top) {
+          const rect = element.getBoundingClientRect();
+          // Si la parte superior de la sección ya cruzó el triggerPoint hacia arriba
+          if (rect.top <= triggerPoint) {
             setActiveHref(item.href);
             return;
           }
