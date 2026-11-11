@@ -8,10 +8,12 @@ import {
   useImperativeHandle,
   useLayoutEffect,
   useMemo,
-  useRef
+  useRef,
+  useState
 } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { BeachIcon, BridgeIcon, CloudIcon, SunsetIcon } from '@hugeicons/core-free-icons';
+import ImageLightboxModal from './ImageLightboxModal';
 
 const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
@@ -87,7 +89,7 @@ const SLOT_STYLE = {
   backfaceVisibility: 'hidden'
 };
 const SLOT_CLASS =
-  'pointer-events-auto absolute isolate touch-pan-y overflow-hidden select-none group-focus-visible/swap:data-front:outline-2 group-focus-visible/swap:data-front:outline-offset-[3px] group-focus-visible/swap:data-front:outline-solid group-focus-visible/swap:data-front:[outline-color:var(--swap-ink)]';
+  'pointer-events-auto absolute isolate touch-pan-y overflow-hidden select-none group/slot group-focus-visible/swap:data-front:outline-2 group-focus-visible/swap:data-front:outline-offset-[3px] group-focus-visible/swap:data-front:outline-solid group-focus-visible/swap:data-front:[outline-color:var(--swap-ink)]';
 const TILE_RIM = 'inset 0 0 0 1px var(--swap-tile-edge), inset 0 1px 0 var(--swap-tile-highlight)';
 const MEDIA_RIM = 'inset 0 0 0 1px var(--swap-media-edge)';
 
@@ -162,6 +164,7 @@ const ItemCard = ({ item }) => (
       )}
       {item.image && (
         <div
+          data-swap-image="true"
           className="relative min-h-0 flex-1 overflow-hidden"
           style={{ borderRadius: 'max(0px, calc(var(--swap-radius) - 6px))', background: 'var(--swap-badge)' }}
         >
@@ -169,13 +172,31 @@ const ItemCard = ({ item }) => (
             src={item.image}
             alt={item.alt ?? item.title ?? ''}
             draggable={false}
-            className="pointer-events-none absolute inset-0 block h-full w-full object-cover select-none [-webkit-user-drag:none]"
+            className="pointer-events-none absolute inset-0 block h-full w-full object-cover select-none [-webkit-user-drag:none] transition-transform duration-500 group-data-[front]/slot:group-hover/slot:scale-[1.03]"
           />
           <span
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 rounded-[inherit]"
             style={{ boxShadow: MEDIA_RIM }}
           />
+
+          {/* Floating zoom indicator on hover when card is in front */}
+          <div className="pointer-events-none absolute inset-0 hidden group-data-[front]/slot:flex items-center justify-center opacity-0 group-hover/slot:opacity-100 transition-opacity duration-300 bg-black/35 backdrop-blur-[2px]">
+            <span className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-950/85 border border-white/30 text-white text-xs font-medium tracking-wide shadow-[0_0_25px_rgba(255,255,255,0.18)] backdrop-blur-md transform transition-all duration-300 group-hover/slot:scale-105">
+              <svg className="w-3.5 h-3.5 text-white/90 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line x1="11" y1="8" x2="11" y2="14" />
+                <line x1="8" y1="11" x2="14" y2="11" />
+              </svg>
+              <span>Ampliar proyecto</span>
+            </span>
+          </div>
+
+          {/* Mobile touch badge on front card */}
+          <div className="pointer-events-none absolute bottom-2 right-2 hidden group-data-[front]/slot:flex sm:!hidden items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-950/80 border border-white/20 text-white text-[10px] font-medium backdrop-blur-md shadow-lg">
+            <span>Toca para ver</span>
+          </div>
         </div>
       )}
     </div>
@@ -194,7 +215,7 @@ const CardSwap = forwardRef(
       skewAmount = 6,
       visibleCards = 4,
       delay = 4000,
-      autoplay = true,
+      autoplay = false,
       pauseOnHover = true,
       draggable = true,
       speed = 1,
@@ -206,6 +227,7 @@ const CardSwap = forwardRef(
       intro = true,
       theme = 'dark',
       onCardClick,
+      onImageClick,
       onChange,
       className = '',
       children
@@ -218,6 +240,7 @@ const CardSwap = forwardRef(
     const shadeRefs = useRef([]);
     const apiRef = useRef(null);
     const settingsRef = useRef(null);
+    const [modalIndex, setModalIndex] = useState(null);
 
     const cards = useMemo(() => {
       const custom = Children.toArray(children).filter(isValidElement);
@@ -264,7 +287,9 @@ const CardSwap = forwardRef(
       hoverSpread: Math.max(0, hoverSpread),
       dim: clamp(dim, 0, 1),
       bounds,
+      modalOpen: modalIndex !== null,
       onCardClick,
+      onImageClick,
       onChange
     };
 
@@ -272,7 +297,10 @@ const CardSwap = forwardRef(
       ref,
       () => ({
         next: () => apiRef.current?.next(),
-        prev: () => apiRef.current?.prev()
+        prev: () => apiRef.current?.prev(),
+        goToIndex: targetIndex => apiRef.current?.goToIndex?.(targetIndex),
+        openModal: targetIndex => apiRef.current?.openModal?.(targetIndex),
+        getActiveIndex: () => apiRef.current?.getActiveIndex?.()
       }),
       []
     );
@@ -370,7 +398,7 @@ const CardSwap = forwardRef(
           const depthT = clamp(card.p / Math.max(1, s.visible - 1), 0, 1);
           shade.style.opacity = (s.dim * 0.62 * depthT).toFixed(3);
         }
-        el.style.cursor = card.phase === 'drag' ? 'grabbing' : card.pos > 0 ? 'pointer' : s.draggable ? 'grab' : '';
+        el.style.cursor = card.phase === 'drag' ? 'grabbing' : card.pos > 0 ? 'pointer' : s.draggable ? 'zoom-in' : '';
         if (card.pos === 0) el.setAttribute('data-front', '');
         else el.removeAttribute('data-front');
       };
@@ -485,6 +513,7 @@ const CardSwap = forwardRef(
       const paused = () => {
         const s = settingsRef.current;
         return (
+          Boolean(s.modalOpen) ||
           !s.autoplay ||
           count < 2 ||
           (s.pauseOnHover && state.overCard) ||
@@ -707,7 +736,14 @@ const CardSwap = forwardRef(
         const index = Number(target.getAttribute('data-swap-index'));
         settingsRef.current.onCardClick?.(index);
         const position = state.order.indexOf(index);
-        if (position > 0) goTo(position);
+        if (position > 0) {
+          goTo(position);
+        } else if (position === 0) {
+          const allItems = items?.length ? items : DEFAULT_ITEMS;
+          const currentItem = allItems[index];
+          settingsRef.current.onImageClick?.(currentItem, index);
+          setModalIndex(index);
+        }
       };
 
       const onVisibility = () => schedule();
@@ -715,6 +751,15 @@ const CardSwap = forwardRef(
       apiRef.current = {
         next: () => shift(1),
         prev: () => shift(-1),
+        goToIndex: targetIndex => {
+          const position = state.order.indexOf(targetIndex);
+          if (position > 0) goTo(position);
+        },
+        openModal: targetIndex => {
+          const idx = typeof targetIndex === 'number' ? targetIndex : state.order[0];
+          setModalIndex(idx);
+        },
+        getActiveIndex: () => state.order[0],
         refresh: () => {
           const s = settingsRef.current;
           deck.forEach(card => {
@@ -731,6 +776,7 @@ const CardSwap = forwardRef(
             schedule();
           }
           fit();
+          writeStage(s);
           wake();
         }
       };
@@ -811,43 +857,56 @@ const CardSwap = forwardRef(
     };
 
     return (
-      <div
-        ref={rootRef}
-        className={`group/swap relative h-full w-full outline-none [-webkit-tap-highlight-color:transparent] ${className}`.trim()}
-        style={rootStyle}
-        tabIndex={0}
-        role="region"
-        aria-roledescription="carousel"
-        aria-label="Card stack"
-        onKeyDown={onKeyDown}
-      >
-        <div className="pointer-events-none max-h-full overflow-hidden" aria-hidden="true">
-          <span className="block w-full" style={SIZER_STYLE} />
-        </div>
-        <div ref={stageRef} className="pointer-events-none absolute top-1/2 left-1/2" style={STAGE_STYLE}>
-          {cards.map((card, index) => (
-            <div
-              key={index}
-              ref={node => {
-                slotRefs.current[index] = node;
-              }}
-              className={SLOT_CLASS}
-              style={SLOT_STYLE}
-              data-swap-index={index}
-            >
-              {card}
-              <span
+      <>
+        <div
+          ref={rootRef}
+          className={`group/swap relative h-full w-full outline-none [-webkit-tap-highlight-color:transparent] ${className}`.trim()}
+          style={rootStyle}
+          tabIndex={0}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Card stack"
+          onKeyDown={onKeyDown}
+        >
+          <div className="pointer-events-none max-h-full overflow-hidden" aria-hidden="true">
+            <span className="block w-full" style={SIZER_STYLE} />
+          </div>
+          <div ref={stageRef} className="pointer-events-none absolute top-1/2 left-1/2" style={STAGE_STYLE}>
+            {cards.map((card, index) => (
+              <div
+                key={index}
                 ref={node => {
-                  shadeRefs.current[index] = node;
+                  slotRefs.current[index] = node;
                 }}
-                className="pointer-events-none absolute inset-0 z-[3] rounded-[inherit] opacity-0"
-                style={{ background: 'var(--swap-shade)' }}
-                aria-hidden="true"
-              />
-            </div>
-          ))}
+                className={SLOT_CLASS}
+                style={SLOT_STYLE}
+                data-swap-index={index}
+              >
+                {card}
+                <span
+                  ref={node => {
+                    shadeRefs.current[index] = node;
+                  }}
+                  className="pointer-events-none absolute inset-0 z-[3] rounded-[inherit] opacity-0"
+                  style={{ background: 'var(--swap-shade)' }}
+                  aria-hidden="true"
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+
+        <ImageLightboxModal
+          isOpen={modalIndex !== null}
+          items={items?.length ? items : DEFAULT_ITEMS}
+          currentIndex={modalIndex ?? 0}
+          onClose={() => setModalIndex(null)}
+          onNavigate={nextIdx => {
+            setModalIndex(nextIdx);
+            apiRef.current?.goToIndex?.(nextIdx);
+          }}
+        />
+      </>
     );
   }
 );
