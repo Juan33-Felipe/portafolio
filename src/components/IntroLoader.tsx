@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { EASE_OUT, INTRO_DURATION } from './motion';
+import { useApp } from '../context/AppContext';
+import { translations } from '../context/translations';
 
 const LOGO = 'JFZP®';
 
 /** Pantalla de entrada: el logo se revela letra a letra, una barra se llena y la cortina sube. */
 export const IntroLoader: React.FC = () => {
+  const { theme, lang } = useApp();
+  const t = translations[lang].intro;
+  const isLight = theme === 'light';
+
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -26,14 +32,18 @@ export const IntroLoader: React.FC = () => {
       {visible && (
         <motion.div
           key="intro"
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#070709]"
+          className={`fixed inset-0 z-[100] flex flex-col items-center justify-center ${
+            isLight ? 'bg-[#f4f4f7]' : 'bg-[#070709]'
+          }`}
           initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
           exit={{ clipPath: 'inset(0% 0% 100% 0%)' }}
           transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
           aria-hidden="true"
         >
           <motion.div
-            className="flex overflow-hidden font-display text-5xl sm:text-7xl tracking-[0.12em] text-white"
+            className={`flex overflow-hidden font-display text-5xl sm:text-7xl tracking-[0.12em] ${
+              isLight ? 'text-zinc-950' : 'text-white'
+            }`}
             exit={{ y: -40, opacity: 0 }}
             transition={{ duration: 0.5, ease: EASE_OUT }}
           >
@@ -49,21 +59,23 @@ export const IntroLoader: React.FC = () => {
               </motion.span>
             ))}
           </motion.div>
-          <div className="mt-6 h-px w-40 sm:w-56 bg-white/10 overflow-hidden">
+          <div className={`mt-6 h-px w-40 sm:w-56 overflow-hidden ${isLight ? 'bg-black/10' : 'bg-white/10'}`}>
             <motion.div
-              className="h-full w-full bg-white origin-left"
+              className={`h-full w-full origin-left ${isLight ? 'bg-black' : 'bg-white'}`}
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: INTRO_DURATION - 0.3, ease: [0.65, 0, 0.35, 1] }}
             />
           </div>
           <motion.span
-            className="mt-4 font-sans text-[10px] uppercase tracking-[0.3em] text-zinc-500"
+            className={`mt-4 font-sans text-[10px] uppercase tracking-[0.3em] ${
+              isLight ? 'text-zinc-600' : 'text-zinc-500'
+            }`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            Portafolio · Pasto, CO
+            {t.location}
           </motion.span>
         </motion.div>
       )}

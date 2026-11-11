@@ -3,16 +3,14 @@ import { Download } from 'lucide-react';
 import ReflectiveCard from './ReflectiveCard';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { EASE_OUT, INTRO_DURATION, RotatingWords } from './motion';
-
-const NAME_LINES = ['JUAN', 'FELIPE', 'ZAMBRANO'] as const;
-const ROLES = [
-  'Arquitecto de Soluciones',
-  'Ingeniería de Software',
-  'Interfaces & Sistemas',
-  'Clean Architecture',
-] as const;
+import { useApp } from '../context/AppContext';
+import { translations } from '../context/translations';
 
 export const HeroSection: React.FC = () => {
+  const { theme, lang } = useApp();
+  const t = translations[lang].hero;
+  const isLight = theme === 'light';
+
   const sectionRef = useRef<HTMLElement>(null);
   const [isMobile, setIsMobile] = useState<boolean>(() =>
     typeof window !== 'undefined' ? window.innerWidth < 640 : false
@@ -53,9 +51,13 @@ export const HeroSection: React.FC = () => {
               hidden: {},
               show: { transition: { staggerChildren: 0.12, delayChildren: INTRO_DURATION + 0.15 } },
             }}
-            className="font-display font-normal uppercase tracking-[0.02em] leading-[0.94] text-[2.35rem] sm:text-[3.8rem] lg:text-[4.4rem] xl:text-[5rem] text-white select-none break-words drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]"
+            className={`font-display font-normal uppercase tracking-[0.02em] leading-[0.94] text-[2.35rem] sm:text-[3.8rem] lg:text-[4.4rem] xl:text-[5rem] select-none break-words ${
+              isLight
+                ? 'text-zinc-950 drop-shadow-[0_4px_16px_rgba(0,0,0,0.1)]'
+                : 'text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]'
+            }`}
           >
-            {NAME_LINES.map((line) => (
+            {t.name.map((line) => (
               <span key={line} className="block overflow-hidden pb-[0.06em]" aria-hidden="true">
                 <motion.span
                   className="block"
@@ -76,11 +78,13 @@ export const HeroSection: React.FC = () => {
             initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 1, delay: INTRO_DURATION + 0.55, ease: EASE_OUT }}
-            className="mt-4 sm:mt-6 text-sm sm:text-lg lg:text-[1.2rem] font-sans font-semibold leading-relaxed max-w-xl text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+            className={`mt-4 sm:mt-6 text-sm sm:text-lg lg:text-[1.2rem] font-sans font-semibold leading-relaxed max-w-xl ${
+              isLight ? 'text-zinc-800' : 'text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]'
+            }`}
           >
-            <span>Desarrollador de Software</span>{' '}
-            <span className="text-zinc-300 font-normal">&amp;</span>{' '}
-            <RotatingWords words={ROLES} className="text-zinc-200 font-medium" />
+            <span>{t.rolePrefix}</span>{' '}
+            <span className={isLight ? 'text-zinc-500 font-normal' : 'text-zinc-300 font-normal'}>&amp;</span>{' '}
+            <RotatingWords words={t.roles} className={isLight ? 'text-zinc-900 font-medium' : 'text-zinc-200 font-medium'} />
           </motion.p>
 
           {/* Botones de acción: Descargar CV y Contacto */}
@@ -95,16 +99,24 @@ export const HeroSection: React.FC = () => {
               download="CV_Juan_Felipe_Zambrano.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-zinc-950 font-sans text-xs sm:text-sm font-semibold tracking-wide hover:bg-zinc-200 transition-all duration-300 shadow-[0_0_24px_rgba(255,255,255,0.25)] hover:shadow-[0_0_32px_rgba(255,255,255,0.4)] active:scale-95"
+              className={`group inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 active:scale-95 ${
+                isLight
+                  ? 'bg-zinc-950 text-white hover:bg-zinc-800 shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.3)]'
+                  : 'bg-white text-zinc-950 hover:bg-zinc-200 shadow-[0_0_24px_rgba(255,255,255,0.25)] hover:shadow-[0_0_32px_rgba(255,255,255,0.4)]'
+              }`}
             >
               <Download className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5" />
-              <span>Descargar CV</span>
+              <span>{t.downloadCv}</span>
             </a>
             <a
               href="#contacto"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/10 hover:border-white/25 font-sans text-xs sm:text-sm font-medium tracking-wide transition-all duration-300 active:scale-95"
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans text-xs sm:text-sm font-medium tracking-wide transition-all duration-300 active:scale-95 border ${
+                isLight
+                  ? 'bg-white/80 hover:bg-white text-zinc-900 border-black/10 hover:border-black/25 shadow-sm'
+                  : 'bg-white/[0.06] hover:bg-white/[0.12] text-white border-white/10 hover:border-white/25'
+              }`}
             >
-              <span>Contáctame</span>
+              <span>{t.contactMe}</span>
             </a>
           </motion.div>
 
@@ -114,16 +126,23 @@ export const HeroSection: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: INTRO_DURATION + 1.0 }}
-            className="group mt-8 hidden sm:inline-flex items-center gap-3 font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-400 hover:text-white transition-colors"
+            className={`group mt-8 hidden sm:inline-flex items-center gap-3 font-sans text-[11px] font-medium uppercase tracking-[0.18em] transition-colors ${
+              isLight ? 'text-zinc-500 hover:text-black' : 'text-zinc-400 hover:text-white'
+            }`}
           >
-            <span className="relative block w-[1px] h-10 bg-white/15 overflow-hidden" aria-hidden="true">
+            <span
+              className={`relative block w-[1px] h-10 overflow-hidden ${
+                isLight ? 'bg-black/15' : 'bg-white/15'
+              }`}
+              aria-hidden="true"
+            >
               <motion.span
-                className="absolute left-0 top-0 w-full h-1/2 bg-white"
+                className={`absolute left-0 top-0 w-full h-1/2 ${isLight ? 'bg-black' : 'bg-white'}`}
                 animate={{ y: ['-100%', '200%'] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
               />
             </span>
-            Desliza para explorar
+            {t.scrollPrompt}
           </motion.a>
         </motion.div>
 
@@ -137,13 +156,13 @@ export const HeroSection: React.FC = () => {
         >
           <ReflectiveCard
             name="Juan Felipe Zambrano"
-            role="Ingeniero de Software"
+            role={t.cardRole}
             imageSrc="/profile-card.png"
             idLabel=""
-            idValue="Estudiante de Ingeniería de Software enfocado en el diseño y construcción de aplicaciones modernas, interfaces fluidas y arquitecturas escalables mediante el uso de frameworks de alto rendimiento y patrones de diseño sólidos."
+            idValue={t.cardBio}
             videoSrc="/videos/reflection.mp4"
             webcam={false}
-            tint="#ffffff"
+            tint={isLight ? '#f0f0f5' : '#ffffff'}
             metalness={0.85}
             roughness={0.18}
             blurStrength={18}

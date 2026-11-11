@@ -14,9 +14,10 @@ import {
   Cpu,
   CheckCircle2,
   FileText,
-  Activity,
   AppWindow,
 } from 'lucide-react';
+import { useApp } from '../context/AppContext';
+import { translations } from '../context/translations';
 
 export interface LightboxMetric {
   label: string;
@@ -64,6 +65,10 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
   currentIndex,
   onNavigate,
 }) => {
+  const { theme, lang } = useApp();
+  const m = translations[lang].projects.modal;
+  const isLight = theme === 'light';
+
   const count = items.length;
   const currentItem = items[currentIndex];
 
@@ -145,7 +150,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: EXPANSION_EASE }}
             style={{ willChange: 'opacity' }}
-            className="fixed inset-0 bg-black/85 backdrop-blur-md"
+            className={`fixed inset-0 backdrop-blur-md ${isLight ? 'bg-black/60' : 'bg-black/85'}`}
             onClick={onClose}
             aria-hidden="true"
           />
@@ -153,10 +158,12 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
           {/* 2. Soft expanding radial aura behind the card */}
           <motion.div
             initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 0.2, scale: 1.15 }}
+            animate={{ opacity: isLight ? 0.35 : 0.2, scale: 1.15 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.7, ease: EXPANSION_EASE }}
-            className="absolute z-0 w-[550px] h-[550px] rounded-full bg-white/10 blur-3xl pointer-events-none"
+            className={`absolute z-0 w-[550px] h-[550px] rounded-full blur-3xl pointer-events-none ${
+              isLight ? 'bg-blue-400/25' : 'bg-white/10'
+            }`}
           />
 
           {/* 3. Modal Dialog Card expanding forward */}
@@ -184,39 +191,53 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
               ease: EXPANSION_EASE,
             }}
             style={{ willChange: 'transform, opacity, filter' }}
-            className="relative z-10 w-[96vw] max-w-[1540px] h-[92vh] max-h-[94vh] flex flex-col bg-[#0d0d12]/95 border border-white/20 rounded-3xl p-2.5 sm:p-4 shadow-[0_25px_70px_rgba(0,0,0,0.92),0_0_40px_rgba(255,255,255,0.06),inset_0_1px_1px_rgba(255,255,255,0.2)] overflow-hidden"
+            className={`relative z-10 w-[96vw] max-w-[1540px] h-[92vh] max-h-[94vh] flex flex-col rounded-3xl p-2.5 sm:p-4 overflow-hidden border backdrop-blur-2xl transition-colors duration-300 ${
+              isLight
+                ? 'bg-white/95 border-black/15 shadow-[0_25px_70px_rgba(0,0,0,0.35)] text-zinc-900'
+                : 'bg-[#0d0d12]/95 border-white/20 shadow-[0_25px_70px_rgba(0,0,0,0.92),0_0_40px_rgba(255,255,255,0.06),inset_0_1px_1px_rgba(255,255,255,0.2)] text-white'
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Ambient Glass Highlight Rim */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+            <div className={`absolute inset-x-0 top-0 h-px pointer-events-none ${
+              isLight ? 'bg-gradient-to-r from-transparent via-black/15 to-transparent' : 'bg-gradient-to-r from-transparent via-white/30 to-transparent'
+            }`} />
 
             {/* Header: Title, Category, Tabs, Actions & Close Button */}
             <motion.div
               initial={{ opacity: 0, y: -14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.16, duration: 0.45, ease: EXPANSION_EASE }}
-              className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-2 border-b border-white/10 px-1 sm:px-2 shrink-0"
+              className={`flex flex-wrap items-center justify-between gap-3 pb-3 mb-2 border-b px-1 sm:px-2 shrink-0 ${
+                isLight ? 'border-black/10' : 'border-white/10'
+              }`}
             >
               {/* Title & Category Badge */}
               <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                <span className="p-1.5 rounded-lg bg-white/10 text-white/90 shrink-0 shadow-sm border border-white/10">
-                  <ZoomIn className="w-4 h-4 text-zinc-300" />
+                <span className={`p-1.5 rounded-lg shrink-0 shadow-sm border ${
+                  isLight ? 'bg-black/5 text-zinc-800 border-black/10' : 'bg-white/10 text-white/90 border-white/10'
+                }`}>
+                  <ZoomIn className="w-4 h-4" />
                 </span>
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-2">
                     {currentItem.title && (
-                      <h3 className="font-sans font-semibold text-sm sm:text-base text-white/95 truncate tracking-tight">
+                      <h3 className={`font-sans font-semibold text-sm sm:text-base truncate tracking-tight ${
+                        isLight ? 'text-zinc-950' : 'text-white/95'
+                      }`}>
                         {currentItem.title}
                       </h3>
                     )}
                     {count > 1 && (
-                      <span className="shrink-0 text-xs text-zinc-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full font-mono">
+                      <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-mono border ${
+                        isLight ? 'text-zinc-600 bg-black/5 border-black/10' : 'text-zinc-400 bg-white/5 border-white/10'
+                      }`}>
                         {currentIndex + 1} / {count}
                       </span>
                     )}
                   </div>
                   {currentItem.category && (
-                    <span className="text-[11px] text-zinc-400 truncate">
+                    <span className={`text-[11px] truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
                       {currentItem.category}
                       {currentItem.status ? ` • ${currentItem.status}` : ''}
                     </span>
@@ -225,30 +246,40 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
               </div>
 
               {/* Central View Toggles */}
-              <div className="flex items-center bg-white/[0.06] p-1 rounded-xl border border-white/10">
+              <div className={`flex items-center p-1 rounded-xl border ${
+                isLight ? 'bg-black/[0.04] border-black/10' : 'bg-white/[0.06] border-white/10'
+              }`}>
                 <button
                   type="button"
                   onClick={() => setActiveTab('media')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                     activeTab === 'media'
-                      ? 'bg-white/15 text-white border border-white/20 shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
+                      ? isLight
+                        ? 'bg-white text-black border border-black/10 shadow-sm font-semibold'
+                        : 'bg-white/15 text-white border border-white/20 shadow-sm'
+                      : isLight
+                        ? 'text-zinc-600 hover:text-black'
+                        : 'text-zinc-400 hover:text-white'
                   }`}
                 >
                   <AppWindow className="w-3.5 h-3.5" />
-                  <span>{isApp ? 'App en vivo' : 'Vista previa'}</span>
+                  <span>{isApp ? m.liveApp : m.preview}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('details')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                     activeTab === 'details'
-                      ? 'bg-white/15 text-white border border-white/20 shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
+                      ? isLight
+                        ? 'bg-white text-black border border-black/10 shadow-sm font-semibold'
+                        : 'bg-white/15 text-white border border-white/20 shadow-sm'
+                      : isLight
+                        ? 'text-zinc-600 hover:text-black'
+                        : 'text-zinc-400 hover:text-white'
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span>Ficha técnica</span>
+                  <span>{m.specSheetTab}</span>
                 </button>
               </div>
 
@@ -262,10 +293,14 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.96 }}
                     title="Descargar aplicación ejecutable para Windows (.exe)"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-medium text-white shadow-sm transition-all cursor-pointer"
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border shadow-sm transition-all cursor-pointer ${
+                      isLight
+                        ? 'bg-black/5 hover:bg-black/10 border-black/15 text-zinc-900'
+                        : 'bg-white/10 hover:bg-white/20 border-white/15 text-white'
+                    }`}
                   >
-                    <Download className="w-3.5 h-3.5 text-zinc-300" />
-                    <span className="hidden sm:inline">Descargar .exe</span>
+                    <Download className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{m.downloadExe}</span>
                   </motion.a>
                 )}
 
@@ -278,7 +313,11 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                     whileHover={{ scale: 1.08 }}
                     whileTap={{ scale: 0.92 }}
                     title="Visitar sitio web / Abrir aplicación en nueva pestaña"
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-zinc-300 hover:text-white transition-colors duration-200 cursor-pointer shrink-0"
+                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full border flex items-center justify-center transition-colors duration-200 cursor-pointer shrink-0 ${
+                      isLight
+                        ? 'bg-black/5 hover:bg-black/10 border-black/15 text-zinc-800'
+                        : 'bg-white/10 hover:bg-white/20 border-white/10 text-zinc-300 hover:text-white'
+                    }`}
                   >
                     <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </motion.a>
@@ -292,7 +331,11 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2 }}
                   aria-label="Cerrar modal"
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-zinc-300 hover:text-white transition-colors duration-200 cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-white/40"
+                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full border flex items-center justify-center transition-colors duration-200 cursor-pointer shrink-0 focus:outline-none ${
+                    isLight
+                      ? 'bg-black/5 hover:bg-black/10 border-black/15 text-zinc-800 focus:ring-2 focus:ring-black/20'
+                      : 'bg-white/10 hover:bg-white/20 border-white/10 text-zinc-300 hover:text-white focus:ring-2 focus:ring-white/40'
+                  }`}
                 >
                   <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.button>
@@ -300,29 +343,37 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
             </motion.div>
 
             {/* Central Display: Media or Technical Details View */}
-            <div className="relative flex-1 flex flex-col min-h-0 overflow-hidden my-1 rounded-2xl bg-black/60 border border-white/10">
+            <div className={`relative flex-1 flex flex-col min-h-0 overflow-hidden my-1 rounded-2xl border ${
+              isLight ? 'bg-zinc-100/80 border-black/10' : 'bg-black/60 border-white/10'
+            }`}>
               {activeTab === 'details' ? (
                 /* Full Technical Sheet View inside Modal */
                 <div className="flex-1 w-full h-full overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
                   {/* Top Header Card */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+                  <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b ${
+                    isLight ? 'border-black/10' : 'border-white/10'
+                  }`}>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider bg-white/5 border border-white/15 text-zinc-300">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider border ${
+                          isLight ? 'bg-black/5 border-black/10 text-zinc-700' : 'bg-white/5 border-white/15 text-zinc-300'
+                        }`}>
                           {currentItem.category || 'Proyecto de Software'}
                         </span>
                         {currentItem.status && (
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono text-zinc-300 bg-white/5 border border-white/10">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono border ${
+                            isLight ? 'bg-black/5 border-black/10 text-zinc-700' : 'bg-white/5 border-white/10 text-zinc-300'
+                          }`}>
                             {currentItem.status}
                           </span>
                         )}
                       </div>
-                      <h4 className="font-display text-2xl sm:text-3xl text-white tracking-wide">
+                      <h4 className={`font-display text-2xl sm:text-3xl tracking-wide ${isLight ? 'text-zinc-950' : 'text-white'}`}>
                         {currentItem.title}
                       </h4>
                       {currentItem.role && (
-                        <p className="text-xs sm:text-sm text-zinc-400 font-medium mt-0.5">
-                          Rol: {currentItem.role}
+                        <p className={`text-xs sm:text-sm font-medium mt-0.5 ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
+                          {m.roleLabel} {currentItem.role}
                         </p>
                       )}
                     </div>
@@ -333,10 +384,10 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                           href={currentItem.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-400 text-zinc-950 hover:bg-amber-300 text-xs font-semibold shadow-md transition-all"
+                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-400 text-zinc-950 hover:bg-amber-300 text-xs font-semibold shadow-md transition-all cursor-pointer"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
-                          <span>Visitar Web</span>
+                          <span>{translations[lang].projects.visitWeb}</span>
                         </a>
                       )}
                       {currentItem.githubUrl && (
@@ -344,9 +395,11 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                           href={currentItem.githubUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold shadow-md transition-all"
+                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold shadow-md transition-all cursor-pointer ${
+                            isLight ? 'bg-zinc-950 text-white hover:bg-zinc-800' : 'bg-white text-zinc-950 hover:bg-zinc-200'
+                          }`}
                         >
-                          <span>Ver Código en GitHub</span>
+                          <span>{translations[lang].projects.viewCode}</span>
                         </a>
                       )}
                       {currentItem.githubFrontendUrl && (
@@ -354,9 +407,11 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                           href={currentItem.githubFrontendUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold shadow-md transition-all"
+                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold shadow-md transition-all cursor-pointer ${
+                            isLight ? 'bg-zinc-950 text-white hover:bg-zinc-800' : 'bg-white text-zinc-950 hover:bg-zinc-200'
+                          }`}
                         >
-                          <span>Frontend Repo</span>
+                          <span>{translations[lang].projects.frontendRepo}</span>
                         </a>
                       )}
                       {currentItem.githubBackendUrl && (
@@ -364,29 +419,35 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                           href={currentItem.githubBackendUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold transition-all"
+                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                            isLight ? 'bg-black/5 hover:bg-black/10 border-black/15 text-zinc-900' : 'bg-white/10 hover:bg-white/20 border-white/15 text-white'
+                          }`}
                         >
-                          <span>Backend Repo</span>
+                          <span>{translations[lang].projects.backendRepo}</span>
                         </a>
                       )}
                       {currentItem.appUrl && (
                         <button
                           type="button"
                           onClick={() => setActiveTab('media')}
-                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold transition-all"
+                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                            isLight ? 'bg-black/5 hover:bg-black/10 border-black/15 text-zinc-900' : 'bg-white/10 hover:bg-white/20 border-white/15 text-white'
+                          }`}
                         >
                           <Sparkles className="w-3.5 h-3.5" />
-                          <span>Interactuar con la aplicación</span>
+                          <span>{m.interactPrompt}</span>
                         </button>
                       )}
                       {currentItem.downloadUrl && (
                         <a
                           href={currentItem.downloadUrl}
                           download={currentItem.downloadName}
-                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold transition-all"
+                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                            isLight ? 'bg-black/5 hover:bg-black/10 border-black/15 text-zinc-900' : 'bg-white/10 hover:bg-white/20 border-white/15 text-white'
+                          }`}
                         >
-                          <Download className="w-3.5 h-3.5 text-zinc-300" />
-                          <span>Descargar .exe</span>
+                          <Download className="w-3.5 h-3.5" />
+                          <span>{m.downloadExe}</span>
                         </a>
                       )}
                     </div>
@@ -394,11 +455,15 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
 
                   {/* Descripción extendida */}
                   <div>
-                    <h5 className="text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2 flex items-center gap-2">
-                      <FileText className="w-3.5 h-3.5 text-zinc-300" />
-                      <span>Descripción Técnica y Alcance</span>
+                    <h5 className={`text-xs font-mono uppercase tracking-wider mb-2 flex items-center gap-2 ${
+                      isLight ? 'text-zinc-600' : 'text-zinc-400'
+                    }`}>
+                      <FileText className="w-3.5 h-3.5" />
+                      <span>{m.techDescTitle}</span>
                     </h5>
-                    <p className="text-sm sm:text-base leading-relaxed text-zinc-200 bg-white/[0.02] border border-white/5 p-4 rounded-xl">
+                    <p className={`text-sm sm:text-base leading-relaxed p-4 rounded-xl border ${
+                      isLight ? 'text-zinc-800 bg-white/60 border-black/10' : 'text-zinc-200 bg-white/[0.02] border-white/5'
+                    }`}>
                       {currentItem.longDescription || currentItem.description}
                     </p>
                   </div>
@@ -406,18 +471,24 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                   {/* Características clave */}
                   {currentItem.features && currentItem.features.length > 0 && (
                     <div>
-                      <h5 className="text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2 flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-zinc-300" />
-                        <span>Funcionalidades y Capacidades Principales</span>
+                      <h5 className={`text-xs font-mono uppercase tracking-wider mb-2 flex items-center gap-2 ${
+                        isLight ? 'text-zinc-600' : 'text-zinc-400'
+                      }`}>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>{m.featuresTitle}</span>
                       </h5>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {currentItem.features.map((feat, idx) => (
                           <div
                             key={idx}
-                            className="flex items-start gap-2.5 p-3 rounded-xl bg-white/[0.02] border border-white/5"
+                            className={`flex items-start gap-2.5 p-3 rounded-xl border ${
+                              isLight ? 'bg-white/60 border-black/10' : 'bg-white/[0.02] border-white/5'
+                            }`}
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-white mt-2 shrink-0 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                            <span className="text-xs sm:text-sm text-zinc-300 leading-snug">
+                            <span className={`w-1.5 h-1.5 rounded-full mt-2 shrink-0 ${
+                              isLight ? 'bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]' : 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]'
+                            }`} />
+                            <span className={`text-xs sm:text-sm leading-snug ${isLight ? 'text-zinc-800' : 'text-zinc-300'}`}>
                               {feat}
                             </span>
                           </div>
@@ -429,11 +500,15 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                   {/* Arquitectura */}
                   {currentItem.architecture && (
                     <div>
-                      <h5 className="text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2 flex items-center gap-2">
-                        <Cpu className="w-3.5 h-3.5 text-zinc-300" />
-                        <span>Arquitectura del Sistema & Decisiones de Diseño</span>
+                      <h5 className={`text-xs font-mono uppercase tracking-wider mb-2 flex items-center gap-2 ${
+                        isLight ? 'text-zinc-600' : 'text-zinc-400'
+                      }`}>
+                        <Cpu className="w-3.5 h-3.5" />
+                        <span>{m.archTitle}</span>
                       </h5>
-                      <div className="p-4 rounded-xl bg-zinc-950/60 border border-white/10 text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans">
+                      <div className={`p-4 rounded-xl border text-xs sm:text-sm leading-relaxed font-sans ${
+                        isLight ? 'bg-white border-black/10 text-zinc-800' : 'bg-zinc-950/60 border-white/10 text-zinc-300'
+                      }`}>
                         {currentItem.architecture}
                       </div>
                     </div>
@@ -442,15 +517,19 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                   {/* Stack Tecnológico */}
                   {currentItem.technologies && currentItem.technologies.length > 0 && (
                     <div>
-                      <h5 className="text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2 flex items-center gap-2">
-                        <Layers className="w-3.5 h-3.5 text-zinc-300" />
-                        <span>Tecnologías y Frameworks</span>
+                      <h5 className={`text-xs font-mono uppercase tracking-wider mb-2 flex items-center gap-2 ${
+                        isLight ? 'text-zinc-600' : 'text-zinc-400'
+                      }`}>
+                        <Layers className="w-3.5 h-3.5" />
+                        <span>{m.techTitle}</span>
                       </h5>
                       <div className="flex flex-wrap gap-2">
                         {currentItem.technologies.map((tech) => (
                           <span
                             key={tech}
-                            className="px-3 py-1 rounded-lg text-xs font-medium text-zinc-200 bg-white/[0.04] border border-white/10 hover:border-white/30 transition-colors"
+                            className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${
+                              isLight ? 'bg-white border-black/10 text-zinc-800' : 'bg-white/[0.04] border-white/10 text-zinc-200'
+                            }`}
                           >
                             {tech}
                           </span>
@@ -471,7 +550,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                         <span className="w-2.5 h-2.5 rounded-full bg-green-500/80 inline-block" />
                       </div>
                       <span className="text-[11px] font-mono text-zinc-400 pl-2 hidden sm:inline">
-                        {currentItem.title || 'Aplicación Interactiva'}
+                        {currentItem.title || m.interactiveAppChrome}
                       </span>
                     </div>
 
@@ -479,7 +558,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                       <button
                         type="button"
                         onClick={handleReloadIframe}
-                        title="Reiniciar aplicación"
+                        title={m.reloadApp}
                         className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
                       >
                         <RotateCw className="w-3.5 h-3.5" />
@@ -533,7 +612,11 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         aria-label="Proyecto anterior"
-                        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-black/85 border border-white/20 flex items-center justify-center text-white/90 hover:text-white backdrop-blur-md transition-colors duration-200 shadow-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/40"
+                        className={`absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full border flex items-center justify-center backdrop-blur-md transition-colors duration-200 shadow-xl cursor-pointer focus:outline-none ${
+                          isLight
+                            ? 'bg-white/80 hover:bg-white border-black/15 text-zinc-900'
+                            : 'bg-black/60 hover:bg-black/85 border-white/20 text-white/90 hover:text-white'
+                        }`}
                       >
                         <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                       </motion.button>
@@ -547,7 +630,11 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         aria-label="Siguiente proyecto"
-                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-black/85 border border-white/20 flex items-center justify-center text-white/90 hover:text-white backdrop-blur-md transition-colors duration-200 shadow-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/40"
+                        className={`absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full border flex items-center justify-center backdrop-blur-md transition-colors duration-200 shadow-xl cursor-pointer focus:outline-none ${
+                          isLight
+                            ? 'bg-white/80 hover:bg-white border-black/15 text-zinc-900'
+                            : 'bg-black/60 hover:bg-black/85 border-white/20 text-white/90 hover:text-white'
+                        }`}
                       >
                         <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                       </motion.button>
@@ -562,30 +649,34 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.4 }}
-              className="pt-2 px-2 flex flex-wrap items-center justify-between gap-2 text-zinc-400 text-[11px] sm:text-xs"
+              className={`pt-2 px-2 flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs ${
+                isLight ? 'text-zinc-600' : 'text-zinc-400'
+              }`}
             >
               <div className="flex items-center gap-2 truncate">
                 <span className="truncate">
-                  {currentItem.description || 'Haz clic fuera o presiona Esc para cerrar'}
+                  {currentItem.description || m.footerHint}
                 </span>
                 {activeTab === 'media' && (
                   <button
                     type="button"
                     onClick={() => setActiveTab('details')}
-                    className="underline text-zinc-300 hover:text-white font-medium ml-1 shrink-0"
+                    className={`underline font-medium ml-1 shrink-0 cursor-pointer ${
+                      isLight ? 'text-zinc-900 hover:text-black' : 'text-zinc-300 hover:text-white'
+                    }`}
                   >
-                    Ver ficha técnica completa →
+                    {m.seeFullSpec}
                   </button>
                 )}
               </div>
               {isApp ? (
-                <span className="text-zinc-400 flex items-center gap-1 shrink-0">
-                  <Sparkles className="w-3.5 h-3.5 text-zinc-300" /> Aplicación funcional en vivo
+                <span className="flex items-center gap-1 shrink-0">
+                  <Sparkles className="w-3.5 h-3.5" /> {m.liveFunctionalApp}
                 </span>
               ) : (
                 count > 1 && (
                   <span className="hidden sm:inline shrink-0">
-                    Usa las teclas ← y → para navegar
+                    {m.navHint}
                   </span>
                 )
               )}

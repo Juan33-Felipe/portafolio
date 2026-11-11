@@ -139,7 +139,8 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({ id, children, cl
     <h2
       id={id}
       aria-label={children}
-      className={`font-display font-normal uppercase tracking-[0.02em] text-3xl sm:text-4xl lg:text-[2.65rem] leading-[1.05] text-white ${className}`}
+      className={`font-display font-normal uppercase tracking-[0.02em] text-3xl sm:text-4xl lg:text-[2.65rem] leading-[1.05] text-[#09090b] dark:text-white dark:drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)] ${className}`}
+      style={{ color: 'var(--section-heading-color, inherit)' }}
     >
       <span className="inline-flex overflow-hidden pb-[0.08em]" aria-hidden="true">
         {Array.from(children).map((char, i) => (
@@ -158,7 +159,8 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({ id, children, cl
     </h2>
     <motion.div
       aria-hidden="true"
-      className={`h-1 w-16 bg-white rounded-full mt-2 origin-left ${barClassName}`}
+      className={`h-1 w-16 bg-[#09090b] dark:bg-white rounded-full mt-2 origin-left ${barClassName}`}
+      style={{ backgroundColor: 'var(--section-heading-bar, inherit)' }}
       variants={{
         hidden: { scaleX: 0 },
         show: { scaleX: 1, transition: { duration: 0.9, delay: 0.25, ease: EASE_OUT } },

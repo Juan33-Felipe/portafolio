@@ -1,4 +1,5 @@
 import React from 'react';
+import { AppProvider, useApp } from './context/AppContext';
 import { TopHeaderBar } from './components/TopHeaderBar';
 import { HeroSection } from './components/HeroSection';
 import { AboutSection } from './components/AboutSection';
@@ -13,10 +14,18 @@ import { IntroLoader } from './components/IntroLoader';
 import { CustomCursor } from './components/CustomCursor';
 import { BackToTop } from './components/BackToTop';
 
-export function App() {
+function PortfolioContent() {
+  const { theme } = useApp();
+  const isLight = theme === 'light';
+
   return (
-    <MotionConfig reducedMotion="user">
-    <div className="min-h-screen bg-[#070709] text-white font-sans relative selection:bg-white/20 selection:text-white overflow-x-hidden flex flex-col justify-between">
+    <div
+      className={`min-h-screen font-sans relative overflow-x-hidden flex flex-col justify-between transition-colors duration-500 ${
+        isLight
+          ? 'bg-[#f4f4f7] text-zinc-900 selection:bg-black/10 selection:text-black'
+          : 'bg-[#070709] text-white selection:bg-white/20 selection:text-white'
+      }`}
+    >
       {/* Pantalla de apertura inicial */}
       <IntroLoader />
 
@@ -28,29 +37,33 @@ export function App() {
 
       {/* 0. Topography background */}
       <div
-        className="fixed inset-0 z-0 pointer-events-none bg-[#070709]"
+        className={`fixed inset-0 z-0 pointer-events-none transition-colors duration-500 ${
+          isLight ? 'bg-[#f4f4f7]' : 'bg-[#070709]'
+        }`}
         style={{ zIndex: 0 }}
       >
         <Topography
-          color="#0b68ff"
+          color={isLight ? '#2563eb' : '#0b68ff'}
+          lightMode={isLight}
           colorCycle={true}
           colorCycleSpeed={0.005}
           lineCount={21}
-          lineWidth={1.2}
+          lineWidth={isLight ? 1.4 : 1.2}
           elevation={0.5}
           foreground={0.2}
           tilt={32}
           speed={0.05}
           direction="right"
-          glow={0.65}
+          glow={isLight ? 0.35 : 0.65}
           depthOfField={0.4}
-          fog={0.35}
+          fog={isLight ? 0.25 : 0.35}
           hoverEffect="lift"
           clickEffect="pulse"
           majorLines={false}
           scale={1.8}
           detail={0.15}
           mouseStrength={0.65}
+          opacity={isLight ? 0.85 : 1}
           className="w-full h-full"
           style={{ width: '100vw', height: '100vh' }}
         />
@@ -77,7 +90,16 @@ export function App() {
       {/* 5. Botón flotante para volver arriba */}
       <BackToTop />
     </div>
-    </MotionConfig>
+  );
+}
+
+export function App() {
+  return (
+    <AppProvider>
+      <MotionConfig reducedMotion="user">
+        <PortfolioContent />
+      </MotionConfig>
+    </AppProvider>
   );
 }
 
