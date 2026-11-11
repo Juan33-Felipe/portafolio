@@ -13,6 +13,10 @@ export interface CardSwapItem {
   appUrl?: string;
   downloadUrl?: string;
   downloadName?: string;
+  downloadMacUrl?: string;
+  downloadMacName?: string;
+  downloadMacDmgUrl?: string;
+  downloadMacDmgName?: string;
   description?: string;
   category?: string;
   role?: string;

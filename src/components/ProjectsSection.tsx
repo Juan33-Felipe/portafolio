@@ -11,7 +11,7 @@ import {
   ArrowRight,
   ExternalLink,
 } from 'lucide-react';
-import { SiGithub } from 'react-icons/si';
+import { SiGithub, SiApple } from 'react-icons/si';
 import { SectionHeading } from './motion';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
@@ -31,6 +31,10 @@ const PROJECT_CONFIGS = [
     appUrl: '/projects/equiwage/index.html',
     downloadUrl: '/downloads/EquiWage Analytics 1.0.0.exe',
     downloadName: 'EquiWage Analytics 1.0.0.exe',
+    downloadMacUrl: '/downloads/EquiWage Analytics-1.0.0-arm64-mac.zip',
+    downloadMacName: 'EquiWage Analytics-1.0.0-arm64-mac.zip',
+    downloadMacDmgUrl: '/downloads/EquiWage Analytics-1.0.0-arm64.dmg',
+    downloadMacDmgName: 'EquiWage Analytics-1.0.0-arm64.dmg',
     githubUrl: 'https://github.com/Juan33-Felipe/EquiWage-Analytics',
     technologies: ['React', 'Electron', 'TypeScript', 'Tailwind CSS', 'Recharts', 'Vite', 'Lucide'],
     icon: <HugeiconsIcon icon={Analytics01Icon} size={14} strokeWidth={1.8} />,
@@ -393,6 +397,22 @@ export const ProjectsSection: React.FC = () => {
                     </button>
                   )}
 
+                  {activeProject.downloadMacUrl && (
+                    <a
+                      href={activeProject.downloadMacUrl}
+                      download={activeProject.downloadMacName}
+                      title="Descargar versión portable para macOS Apple Silicon (.zip)"
+                      className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-medium active:scale-95 transition-all cursor-pointer ${
+                        isLight
+                          ? 'bg-black/5 hover:bg-black/10 border-black/10 text-zinc-800'
+                          : 'bg-white/[0.06] hover:bg-white/[0.12] border-white/10 text-white'
+                      }`}
+                    >
+                      <SiApple className="w-3.5 h-3.5" />
+                      <span>{t.downloadMac || 'Descargar (Mac)'}</span>
+                    </a>
+                  )}
+
                   {activeProject.downloadUrl && (
                     <a
                       href={activeProject.downloadUrl}
@@ -404,7 +424,7 @@ export const ProjectsSection: React.FC = () => {
                       }`}
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span>{t.download}</span>
+                      <span>{t.downloadWindows || t.download}</span>
                     </a>
                   )}
 
